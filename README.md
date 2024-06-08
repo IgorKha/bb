@@ -24,7 +24,6 @@ Create options:
 Restore options:
   -b    Backup directory
   -t    Target directory to restore
-  -p    Target partition to restore (for space check)
 Examples:
   ./backup.sh -c                       # Create backup in the default directory
   ./backup.sh -c -v                    # Verify backup after creation
@@ -34,7 +33,7 @@ Examples:
   ./backup.sh -c -s /path/to/source -b /path/to/backup -v
   ./backup.sh -r                      # Restore the latest backup in the default directory
   ./backup.sh -r -b /path/to/backup   # Restore the latest backup in a specific directory
-  ./backup.sh -r -b /path/to/backup -t /path/to/target -p sda1
+  ./backup.sh -r -b /path/to/backup -t /path/to/target
 ```
 
 ## Global variables
@@ -48,9 +47,6 @@ BACKUP_PREFIX=
 BACKUP_DIR=
 SOURCE_DIR=
 TARGET_DIR=
-
-# The name of the partition to check the space. Default sda1
-TARGET_PARTITION=
 
 # Default: True
 LOG_TO_FILE=
