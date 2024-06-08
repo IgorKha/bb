@@ -5,7 +5,7 @@
 A simple and universal script for creating and restoring backups with archive verification after creation and disk space check before deploying the backup.
 
 > [!IMPORTANT]
-> Please check the functionality of the restore_backup() function. You will likely want to implement your own logic there.
+> Please check the functionality of the `restore_backup()` function. You will likely want to implement your own logic there.
 
 ```bash
 user:~$ ./backup.sh -h
@@ -50,4 +50,21 @@ TARGET_PARTITION=
 LOG_TO_FILE=
 # Default: backup.log
 LOG_FILE=
+```
+
+## Log file example
+
+```log
+2024-06-08 17:38:52#
+2024-06-08 17:38:52# ------------------------------------ Backup script ------------------------------------
+2024-06-08 17:38:52# MODE: Start creating backup...
+2024-06-08 17:38:52# SUCCESS: Backup backup-2024-06-08_173852.tar.gz created in ./backup
+2024-06-08 17:38:52# SUCCESS: Backup backup-2024-06-08_173852.tar.gz is valid
+2024-06-08 17:38:52# Done!
+2024-06-08 17:39:08#
+2024-06-08 17:39:08# ------------------------------------ Backup script ------------------------------------
+2024-06-08 17:39:08# MODE: Start restoring backup...
+2024-06-08 17:39:08# Checking archive size...
+2024-06-08 17:39:08# Latest backup: backup-2024-06-08_173852.tar.gz :: requires 15617024 [14 MB] bytes of disc space.
+2024-06-08 17:39:08# ERROR: lsblk is not installed.
 ```
