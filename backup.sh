@@ -225,7 +225,7 @@ get_unzip_archive_size() {
 
   UNZIP_ARCHIVE_SIZE="$size_in_bytes"
 
-  logger "Latest backup: $LATEST_BACKUP :: requires $UNZIP_ARCHIVE_SIZE [$size_in_megabytes] bytes of disc space."
+  logger "Latest backup: $LATEST_BACKUP :: requires $UNZIP_ARCHIVE_SIZE bytes [$size_in_megabytes] of disc space."
 }
 
 # Function to restore the latest backup
