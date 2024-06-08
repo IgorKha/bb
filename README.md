@@ -4,6 +4,8 @@
 
 A simple and universal script for creating and restoring backups with archive verification after creation and disk space check before deploying the backup.
 
+- When restoring, the latest version of the archive is selected based on the date in the archive name among those found in the backup directory (specified via the `-b` key or the `BACKUP_DIR` variable). The search is based on the prefix in the archive name, which is set through `BACKUP_PREFIX`
+
 > [!IMPORTANT]
 > Please check the functionality of the `restore_backup()` function. You will likely want to implement your own logic there.
 
