@@ -187,7 +187,7 @@ get_latest_backup() {
     exit 1
   fi
 
-  max_date_file=$(find "$BACKUP_DIR" -name "${BACKUP_PREFIX}*" -exec basename {} \; | sort -r | head -n 1)
+  max_date_file=$(find "$BACKUP_DIR" -name "${BACKUP_PREFIX}*.tar.gz" -exec basename {} \; | sort -r | head -n 1)
 
   if [ -z "$max_date_file" ]; then
     logger "ERROR: No backup files found in $BACKUP_DIR" >&2
