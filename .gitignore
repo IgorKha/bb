@@ -1,0 +1,6 @@
+# Test folders
+backup/
+source/
+target/
+.DS_Store
+.idea/
