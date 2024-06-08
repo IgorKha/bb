@@ -149,7 +149,7 @@ backup() {
   # Create backup directory if it does not exist
   mkdir -p "$BACKUP_DIR"
   # Create backup
-  tar -czf "$BACKUP_DIR"/"$BACKUP_NAME" "$SOURCE_DIR"
+  tar -czf "$BACKUP_DIR"/"$BACKUP_NAME" -C "$SOURCE_DIR" .
 
   logger "SUCCESS: Backup $BACKUP_NAME created in $BACKUP_DIR"
 }
