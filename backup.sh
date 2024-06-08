@@ -54,7 +54,7 @@ logger() {
 # Function to check dependencies
 check_dependencies() {
   local cmds=("$@")
-  [ ${#cmds[@]} -eq 0 ] && cmds=(tar mkdir cat find awk grep date sort tail head basename file)
+  [ ${#cmds[@]} -eq 0 ] && cmds=(tar mkdir cat find awk grep date sort tail head basename file cut du)
   for cmd in "${cmds[@]}"; do
     if ! command -v "$cmd" &> /dev/null; then
       logger "ERROR: $cmd is not installed." >&2
@@ -68,12 +68,10 @@ bytesto() {
   local value=$1
   local -a powers=(B KB MB GB TB PB EB ZB YB)
   local power=0
-  local size=${#powers[@]}
 
-  while [ "$size" -gt 1 ] && [ "$value" -ge 1024 ]; do
-    ((value /= 1024))
+  while (( $(awk -v val="$value" 'BEGIN {print (val>=1024)}') )) && (( power < 8 )); do
+    value=$(awk -v val="$value" 'BEGIN {printf "%.2f", val / 1024}')
     ((power++))
-    ((size--))
   done
 
   echo "$value ${powers[$power]}"
@@ -143,12 +141,19 @@ backup() {
     exit 1
   fi
 
+  local backup_size
+
   # Create backup directory if it does not exist
   mkdir -p "$BACKUP_DIR"
+
   # Create backup
   tar -czf "$BACKUP_DIR"/"$BACKUP_NAME" -C "$SOURCE_DIR" .
 
+  # Get the size of the backup
+  backup_size=$(($(du -sk "$BACKUP_DIR"/"$BACKUP_NAME" | cut -f1) * 1024))
+
   logger "SUCCESS: Backup $BACKUP_NAME created in $BACKUP_DIR"
+  logger "INFO: Backup size: $backup_size bytes [$(bytesto "$backup_size")]"
 }
 
 # Function to verify the backup
