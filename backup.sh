@@ -22,6 +22,8 @@ BACKUP_NAME="$BACKUP_PREFIX-$(date +%Y-%m-%d_%H%M%S).tar.gz"
 BACKUP_DIR="${BACKUP_DIR:-./backup}"
 SOURCE_DIR="${SOURCE_DIR:-./source}"
 TARGET_DIR="${TARGET_DIR:-./target}"
+
+# The name of the partition to check the space
 TARGET_PARTITION="${TARGET_PARTITION:-sda1}"
 
 

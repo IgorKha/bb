@@ -1,7 +1,11 @@
 # bb
+
 **b**ash **b**ackup
 
 A simple and universal script for creating and restoring backups with archive verification after creation and disk space check before deploying the backup.
+
+> [!IMPORTANT]
+> Please check the functionality of the restore_backup() function. You will likely want to implement your own logic there.
 
 ```bash
 user:~$ ./backup.sh -h
@@ -32,11 +36,18 @@ Examples:
 It also allows setting certain parameters through global variables.
 
 ```bash
+# Backup archive prefix name
 BACKUP_PREFIX=
+
 BACKUP_DIR=
 SOURCE_DIR=
 TARGET_DIR=
+
+# The name of the partition to check the space. Default sda1
 TARGET_PARTITION=
-LOG_TO_FILE=  # Default: True
-LOG_FILE=     # Default: backup.log
+
+# Default: True
+LOG_TO_FILE=
+# Default: backup.log
+LOG_FILE=
 ```
