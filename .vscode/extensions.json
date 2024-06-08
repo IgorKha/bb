@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "timonwong.shellcheck",
+    "aaron-bond.better-comments",
+    "psioniq.psi-header",
+    "gruntfuggly.todo-tree"
+  ]
+}
