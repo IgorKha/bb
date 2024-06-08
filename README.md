@@ -7,6 +7,8 @@ A simple and universal script for creating and restoring backups with archive ve
 > [!IMPORTANT]
 > Please check the functionality of the `restore_backup()` function. You will likely want to implement your own logic there.
 
+## Usage
+
 ```bash
 user:~$ ./backup.sh -h
 
@@ -32,6 +34,8 @@ Examples:
   ./backup.sh -r -b /path/to/backup   # Restore the latest backup in a specific directory
   ./backup.sh -r -b /path/to/backup -t /path/to/target -p sda1
 ```
+
+## Global variables
 
 It also allows setting certain parameters through global variables.
 
