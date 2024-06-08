@@ -23,10 +23,6 @@ BACKUP_DIR="${BACKUP_DIR:-./backup}"
 SOURCE_DIR="${SOURCE_DIR:-./source}"
 TARGET_DIR="${TARGET_DIR:-./target}"
 
-# The name of the partition to check the space
-TARGET_PARTITION="${TARGET_PARTITION:-sda1}"
-
-
 # LOGGER CONFIGURATION
 LOG_TO_FILE="${LOG_TO_FILE:-True}"
 LOG_FILE="${LOG_FILE:-backup.log}"
@@ -85,16 +81,18 @@ bytesto() {
 
 # Function to get the available space in a partition
 get_partition_space() {
-  check_dependencies lsblk
-  if ! lsblk | grep -qw "$TARGET_PARTITION"; then
-    logger "ERROR: Partition $TARGET_PARTITION does not exist." >&2
+  check_dependencies df
+  if [ ! -d "$TARGET_DIR" ]; then
+    logger "ERROR: Directory $TARGET_DIR does not exist." >&2
     exit 1
   fi
   local size_human
-  partition_space=$(lsblk -b -o SIZE,NAME | grep -w "$TARGET_PARTITION" | awk '{print $1}')
+  partition_space=$(df -k "$TARGET_DIR" | tail -1 | awk '{print $4}')
+  # Convert to bytes
+  partition_space=$((partition_space * 1024))
   PARTITION_SPACE_AVAILABLE="$partition_space"
   size_human=$(bytesto "$partition_space")
-  logger "Available space in $TARGET_PARTITION: $PARTITION_SPACE_AVAILABLE bytes [$size_human]"
+  logger "Available space in the partition of $TARGET_DIR: $PARTITION_SPACE_AVAILABLE bytes [$size_human]"
 }
 
 compare_partition_space() {
@@ -119,7 +117,6 @@ Create options:
 Restore options:
   -b    Backup directory
   -t    Target directory to restore
-  -p    Target partition to restore (for space check)
 
 Examples:
   $0 -c                       # Create backup in the default directory
@@ -131,7 +128,7 @@ Examples:
 
   $0 -r                      # Restore the latest backup in the default directory
   $0 -r -b /path/to/backup   # Restore the latest backup in a specific directory
-  $0 -r -b /path/to/backup -t /path/to/target -p sda1
+  $0 -r -b /path/to/backup -t /path/to/target
 EOF
 }
 
@@ -289,16 +286,13 @@ main() {
     ;;
   -r|--restore)
     shift
-    while getopts ":b:t:p:" opt; do
+    while getopts ":b:t:" opt; do
       case ${opt} in
         b )
           BACKUP_DIR=$OPTARG
           ;;
         t )
           TARGET_DIR=$OPTARG
-          ;;
-        p )
-          TARGET_PARTITION=$OPTARG
           ;;
         \? )
           error "Invalid option: -$OPTARG"
