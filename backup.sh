@@ -54,7 +54,7 @@ logger() {
 # Function to check dependencies
 check_dependencies() {
   local cmds=("$@")
-  [ ${#cmds[@]} -eq 0 ] && cmds=(tar find awk grep)
+  [ ${#cmds[@]} -eq 0 ] && cmds=(tar mkdir cat find awk grep sort tail head basename file)
   for cmd in "${cmds[@]}"; do
     if ! command -v "$cmd" &> /dev/null; then
       logger "ERROR: $cmd is not installed." >&2
