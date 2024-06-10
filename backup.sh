@@ -288,6 +288,7 @@ main() {
       verify_backup
     fi
     logger "Done!"
+    exit 0
     ;;
   -r|--restore)
     shift
@@ -314,6 +315,7 @@ main() {
     compare_partition_space
     restore_backup
     logger "Done!"
+    exit 0
     ;;
   *)
     help
