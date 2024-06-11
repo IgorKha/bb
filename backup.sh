@@ -103,18 +103,26 @@ compare_partition_space() {
 # Help function
 help() {
   cat << EOF
-Usage:
-  -c --create     Create a backup
-  -r --restore    Restore the latest backup
+$0 - Backup script to create and restore backups [version: 1.0.0]
 
-Create options:
-  -s    Source directory to backup
-  -b    Backup directory
-  -v    Verify backup after creation
+$0 [MODE][OPTIONS]
 
-Restore options:
-  -b    Backup directory
-  -t    Target directory to restore
+[MODE]
+  Usage:
+    -c --create         Create a backup
+    -r --restore        Restore the latest backup
+
+[OPTIONS]
+  Create options:
+    -s                Source directory to backup
+    -b                Backup directory
+    -v                Verify backup after creation
+    -l [PATH/NAME]    Log file to write the output (default: backup.log)
+
+  Restore options:
+    -b                Backup directory
+    -t                Target directory to restore
+    -l [PATH/NAME]    Log file to write the output (default: backup.log)
 
 Examples:
   $0 -c                       # Create backup in the default directory
@@ -122,11 +130,13 @@ Examples:
   $0 -c -s /path/to/source    # Create backup of a specific directory
   $0 -c -b /path/to/backup    # Create backup in a specific directory
   $0 -c -s /path/to/source -b /path/to/backup
-  $0 -c -s /path/to/source -b /path/to/backup -v
+  $0 -c -s /path/to/source -b /path/to/backup -v -l /path/to/logfile.log
 
   $0 -r                      # Restore the latest backup in the default directory
   $0 -r -b /path/to/backup   # Restore the latest backup in a specific directory
   $0 -r -b /path/to/backup -t /path/to/target
+  $0 -r -b /path/to/backup -t /path/to/target -l logfile.log
+
 EOF
 }
 
@@ -248,12 +258,12 @@ restore_backup() {
 # MAIN FUNCTION                                                               #
 ###############################################################################
 
-main() {
+welcome() {
   logger ""
   logger "------------------------------------ Backup script ------------------------------------"
-  # Check dependencies
-  check_dependencies
+}
 
+main() {
   # Parse command-line options
   case "$1" in
   -h|--help)
@@ -263,7 +273,7 @@ main() {
   -c|--create)
     VERIFY=false
     shift
-    while getopts ":s:b:v" opt; do
+    while getopts ":s:b:vl:" opt; do
       case ${opt} in
         s )
           SOURCE_DIR=$OPTARG
@@ -274,6 +284,9 @@ main() {
         v )
           VERIFY=true
           ;;
+        l )
+          LOG_FILE=$OPTARG
+          ;;
         \? )
           error "Invalid option: -$OPTARG"
           ;;
@@ -282,6 +295,9 @@ main() {
           ;;
       esac
     done
+    welcome
+    # Check dependencies
+    check_dependencies
     logger "MODE: Start creating backup..."
     backup
     if [ "$VERIFY" = true ]; then
@@ -292,13 +308,16 @@ main() {
     ;;
   -r|--restore)
     shift
-    while getopts ":b:t:" opt; do
+    while getopts ":b:t:l:" opt; do
       case ${opt} in
         b )
           BACKUP_DIR=$OPTARG
           ;;
         t )
           TARGET_DIR=$OPTARG
+          ;;
+        l )
+          LOG_FILE=$OPTARG
           ;;
         \? )
           error "Invalid option: -$OPTARG"
@@ -308,6 +327,9 @@ main() {
           ;;
       esac
     done
+    welcome
+    # Check dependencies
+    check_dependencies
     logger "MODE: Start restoring backup..."
     get_latest_backup
     get_unzip_archive_size
