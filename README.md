@@ -14,26 +14,40 @@ A simple and universal script for creating and restoring backups with archive ve
 ```bash
 user:~$ ./backup.sh -h
 
-Usage:
-  -c --create     Create a backup
-  -r --restore    Restore the latest backup
-Create options:
-  -s    Source directory to backup
-  -b    Backup directory
-  -v    Verify backup after creation
-Restore options:
-  -b    Backup directory
-  -t    Target directory to restore
+./backup.sh - Backup script to create and restore backups [version: 1.0.0]
+
+./backup.sh [MODE][OPTIONS]
+
+[MODE]
+  Usage:
+    -c --create         Create a backup
+    -r --restore        Restore the latest backup
+
+[OPTIONS]
+  Create options:
+    -s                Source directory to backup
+    -b                Backup directory
+    -v                Verify backup after creation
+    -l [PATH/NAME]    Log file to write the output (default: backup.log)
+
+  Restore options:
+    -b                Backup directory
+    -t                Target directory to restore
+    -l [PATH/NAME]    Log file to write the output (default: backup.log)
+
 Examples:
   ./backup.sh -c                       # Create backup in the default directory
   ./backup.sh -c -v                    # Verify backup after creation
   ./backup.sh -c -s /path/to/source    # Create backup of a specific directory
   ./backup.sh -c -b /path/to/backup    # Create backup in a specific directory
   ./backup.sh -c -s /path/to/source -b /path/to/backup
-  ./backup.sh -c -s /path/to/source -b /path/to/backup -v
+  ./backup.sh -c -s /path/to/source -b /path/to/backup -v -l /path/to/logfile.log
+
   ./backup.sh -r                      # Restore the latest backup in the default directory
   ./backup.sh -r -b /path/to/backup   # Restore the latest backup in a specific directory
   ./backup.sh -r -b /path/to/backup -t /path/to/target
+  ./backup.sh -r -b /path/to/backup -t /path/to/target -l logfile.log
+
 ```
 
 ## Global variables
