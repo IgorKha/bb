@@ -157,7 +157,7 @@ backup() {
   mkdir -p "$BACKUP_DIR"
 
   # Create backup
-  tar -czf "$BACKUP_DIR"/"$BACKUP_NAME" -C "$SOURCE_DIR" .
+  tar --exclude='tmp' --exclude="$BACKUP_NAME" -czf "$BACKUP_DIR"/"$BACKUP_NAME" -C "$SOURCE_DIR" .
 
   # Get the size of the backup
   backup_size=$(($(du -sk "$BACKUP_DIR"/"$BACKUP_NAME" | cut -f1) * 1024))
