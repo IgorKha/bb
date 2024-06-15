@@ -103,7 +103,7 @@ compare_partition_space() {
 # Help function
 help() {
   cat << EOF
-$0 - Backup script to create and restore backups [version: 1.0.0]
+$0 - Backup script to create and restore backups [version: 1.1.0]
 
 $0 [MODE][OPTIONS]
 
@@ -118,6 +118,7 @@ $0 [MODE][OPTIONS]
     -b                Backup directory
     -v                Verify backup after creation
     -l [PATH/NAME]    Log file to write the output (default: backup.log)
+    -k [NUMBER]       Number of backups to keep (latest backups)
 
   Restore options:
     -b                Backup directory
@@ -127,6 +128,7 @@ $0 [MODE][OPTIONS]
 Examples:
   $0 -c                       # Create backup in the default directory
   $0 -c -v                    # Verify backup after creation
+  $0 -c -k 3 -v               # Keep the latest 3 backups and verify
   $0 -c -s /path/to/source    # Create backup of a specific directory
   $0 -c -b /path/to/backup    # Create backup in a specific directory
   $0 -c -s /path/to/source -b /path/to/backup
@@ -189,6 +191,31 @@ verify_backup() {
     logger "ERROR: Backup $BACKUP_NAME is not valid" >&2
     exit 1
   fi
+}
+
+# Function to remove old backup archives
+remove_old_backups() {
+  # Number of backups to keep
+  local keep=$1
+
+  if [ ! -d "$BACKUP_DIR" ]; then
+    logger "ERROR: Backup directory $BACKUP_DIR does not exist." >&2
+    exit 1
+  fi
+
+  # Get a list of all backup files, sorted by date
+  mapfile -t backups < <(find "$BACKUP_DIR" -name "${BACKUP_PREFIX}*.tar.gz" -exec basename {} \; | sort -r)
+
+  if [ ${#backups[@]} -le "$keep" ]; then
+    logger "INFO: No old backup files to remove." >&2
+    return 0
+  fi
+
+  # Remove all backup files that are older than the specified number
+  for (( i=keep; i<${#backups[@]}; i++ )); do
+    rm "$BACKUP_DIR/${backups[$i]}"
+    logger "INFO: Removed old backup ${backups[$i]}"
+  done
 }
 
 ###############################################################################
@@ -272,8 +299,9 @@ main() {
     ;;
   -c|--create)
     VERIFY=false
+    KEEP=0
     shift
-    while getopts ":s:b:vl:" opt; do
+    while getopts ":s:b:vl:k:" opt; do
       case ${opt} in
         s )
           SOURCE_DIR=$OPTARG
@@ -286,6 +314,9 @@ main() {
           ;;
         l )
           LOG_FILE=$OPTARG
+          ;;
+        k )
+          KEEP=$OPTARG
           ;;
         \? )
           error "Invalid option: -$OPTARG"
@@ -302,6 +333,10 @@ main() {
     backup
     if [ "$VERIFY" = true ]; then
       verify_backup
+    fi
+    # If the keep option was specified, remove old backups
+    if [ "$KEEP" -gt 0 ]; then
+      remove_old_backups "$KEEP"
     fi
     logger "Done!"
     exit 0

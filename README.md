@@ -29,6 +29,7 @@ user:~$ ./backup.sh -h
     -b                Backup directory
     -v                Verify backup after creation
     -l [PATH/NAME]    Log file to write the output (default: backup.log)
+    -k [NUMBER]       Number of backups to keep (latest backups)
 
   Restore options:
     -b                Backup directory
@@ -38,6 +39,7 @@ user:~$ ./backup.sh -h
 Examples:
   ./backup.sh -c                       # Create backup in the default directory
   ./backup.sh -c -v                    # Verify backup after creation
+  ./backup.sh -c -k 3 -v               # Keep the latest 3 backups and verify
   ./backup.sh -c -s /path/to/source    # Create backup of a specific directory
   ./backup.sh -c -b /path/to/backup    # Create backup in a specific directory
   ./backup.sh -c -s /path/to/source -b /path/to/backup
